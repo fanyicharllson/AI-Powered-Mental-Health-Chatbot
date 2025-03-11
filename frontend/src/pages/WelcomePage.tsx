@@ -236,6 +236,10 @@ export default function WelcomePage() {
           </div>
         </motion.div>
       </motion.div>
+
+      <footer className="z-20 absolute bottom-0 right-0 left-0 flex items-center justify-center p-2 text-gray-600 text-sm">
+        &copy; {new Date().getFullYear()} CalmBot. All rights reserved.
+      </footer>
     </div>
   );
 }
