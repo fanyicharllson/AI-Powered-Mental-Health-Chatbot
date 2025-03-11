@@ -1,16 +1,16 @@
 import { useForm } from "react-hook-form";
-import { SignUpSchema } from "../Schema/signUpSchema";
+import { SignInSchema } from "../Schema/signInScema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Lock, EyeOff, Eye, User2 } from "lucide-react";
+import { Mail, Lock, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
 import Loadingspin from "../Loaders/loader1";
 import AppLogo from "./AppLogo";
 import { Link } from "react-router-dom";
 
-type SignUpSchemaData = z.infer<typeof SignUpSchema>;
+type SignUpSchemaData = z.infer<typeof SignInSchema>;
 
-function SignUp() {
+function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -19,9 +19,8 @@ function SignUp() {
     formState: { isSubmitting, errors },
     reset,
   } = useForm<SignUpSchemaData>({
-    resolver: zodResolver(SignUpSchema),
+    resolver: zodResolver(SignInSchema),
     defaultValues: {
-      username: "",
       email: "",
       password: "",
     },
@@ -44,34 +43,14 @@ function SignUp() {
       <div className="bg-white p-6 md:p-8 lg:p-10 w-[98%] max-sm:w-[96%] max-h-[80vh] overflow-y-auto max-w-sm md:max-w-md rounded-lg lg:max-w-lg shadow-lg">
         <div className="text-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-blue-800">
-            Welcome to CalmBot!
+            Welcome back buddy!
           </h1>
           <p className="text-sm text-gray-600 mt-2">
-            Create your account to get started.
+            Sign in to access your account now!
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Username Field */}
-          <div className="space-y-2">
-            <label htmlFor="username" className="label">
-              Username:
-            </label>
-            <div className="relative">
-              <User2 className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <input
-                {...register("username")}
-                placeholder="username"
-                className="input"
-              />
-              {errors.username && (
-                <p className="text-red-500 text-sm">
-                  {errors.username?.message}
-                </p>
-              )}
-            </div>
-          </div>
-
           {/* Email Field */}
           <div className="space-y-2">
             <label htmlFor="email" id="email" className="label">
@@ -136,10 +115,10 @@ function SignUp() {
             {isSubmitting ? (
               <div className="flex items-center justify-center gap-2">
                 <Loadingspin />
-                <span>Signing Up...</span>
+                <span>Signing in...</span>
               </div>
             ) : (
-              "Sign Up"
+              "Sign In"
             )}
           </button>
         </form>
@@ -147,12 +126,12 @@ function SignUp() {
         {/* Login Link */}
         <div className="pt-6">
           <p className="text-center text-sm text-gray-600">
-            Already have an account?{" "}
+            Don't have an account?{" "}
             <Link
-              to="/sign-in"
+              to="/sign-up"
               className="font-bold text-blue-600 hover:underline"
             >
-              Login
+              Sign Up
             </Link>
           </p>
         </div>
@@ -166,4 +145,4 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default SignIn;
