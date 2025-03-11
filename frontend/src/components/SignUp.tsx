@@ -143,6 +143,25 @@ function SignUp() {
             )}
           </button>
         </form>
+        <div className="space-y-2 pt-5">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white text-gray-400 px-2">
+                or continue with
+              </span>
+            </div>
+          </div>
+
+          <div className="text-center flex items-center justify-center pt-3">
+            <button className="w-full flex gap-4 items-center border justify-center py-2 rounded-md hover:bg-blue-100 transition-colors duration-300">
+              <img src="/google.svg" alt="Google Logo" className="w-6 h-6" />
+              <p className="text-sm text-gray-700">Google</p>
+            </button>
+          </div>
+        </div>
 
         {/* Login Link */}
         <div className="pt-6">
