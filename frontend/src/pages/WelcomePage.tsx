@@ -1,11 +1,11 @@
-"use client";
-
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function WelcomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Animation variants
   const containerVariants = {
@@ -82,10 +82,11 @@ export default function WelcomePage() {
       {/* Navbar */}
       <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 md:p-5 max-w-5xl mx-auto z-10">
         <motion.div
-          className="flex items-center"
+          className="flex items-center cursor-pointer"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
+          onClick={() => navigate("/")}
         >
           <img
             src="/logo2.svg"
@@ -106,10 +107,16 @@ export default function WelcomePage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <button className="py-2 px-6 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition shadow-md">
+          <button
+            className="py-2 px-6 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition shadow-md"
+            onClick={() => navigate("/sign-up")}
+          >
             Sign Up
           </button>
-          <button className="py-2 px-6 bg-white text-blue-600 rounded-md font-medium hover:bg-blue-50 transition border border-blue-300 shadow-md">
+          <button
+            className="py-2 px-6 bg-white text-blue-600 rounded-md font-medium hover:bg-blue-50 transition border border-blue-300 shadow-md"
+            onClick={() => navigate("/sign-in")}
+          >
             Login
           </button>
         </motion.div>
@@ -138,10 +145,16 @@ export default function WelcomePage() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
         >
-          <button className="py-2 px-6 w-full text-left hover:bg-blue-100 bg-blue-50 rounded-md mb-2">
+          <button
+            className="py-2 px-6 w-full text-left hover:bg-blue-100 bg-blue-50 rounded-md mb-2"
+            onClick={() => navigate("/sign-up")}
+          >
             Sign Up
           </button>
-          <button className="py-2 px-6 w-full text-left hover:bg-blue-100 bg-blue-50 rounded-md">
+          <button
+            className="py-2 px-6 w-full text-left hover:bg-blue-100 bg-blue-50 rounded-md"
+            onClick={() => navigate("/sign-in")}
+          >
             Login
           </button>
         </motion.div>

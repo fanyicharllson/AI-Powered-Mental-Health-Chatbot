@@ -1,4 +1,4 @@
-import WelcomePage from "./components/WelcomePage";
+import WelcomePage from "./pages/WelcomePage";
 
 export default function App() {
   return (
