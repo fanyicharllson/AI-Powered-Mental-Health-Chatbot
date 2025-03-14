@@ -2,10 +2,13 @@ import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FeatureHighlight from "../components/cards/featureHighlight";
+import Message from "../components/PopUpmessage";
 
 export default function WelcomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [showPopUp, setShowPopUp] = useState(false);
 
   // Animation variants
   const containerVariants = {
@@ -198,45 +201,41 @@ export default function WelcomePage() {
             className="py-3 px-8 border border-blue-400 text-blue-600 font-semibold rounded-md hover:bg-blue-50 transition shadow-sm"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => setShowPopUp(!showPopUp)}
           >
             Get CalmBot App
           </motion.button>
         </motion.div>
+
+        {/* Show PopUp message */}
+        {showPopUp && (
+          <Message
+            message="Mobile App for CalmBot Coming Soon!"
+            setShowPopUp={setShowPopUp}
+          />
+        )}
 
         {/* Feature Highlights */}
         <motion.div
           variants={itemVariants}
           className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-8 md:mt-12 text-blue-600"
         >
-          <div className="bg-white/70 backdrop-blur-sm p-3 md:p-4 rounded-lg shadow-sm">
-            <h3 className="font-semibold mb-1 md:mb-2 text-sm md:text-base">
-              24/7 Support
-            </h3>
-            <p className="text-xs md:text-sm text-blue-600/80">
-              Always available when you need someone to talk to
-            </p>
-          </div>
-
-          <div className="bg-white/70 backdrop-blur-sm p-3 md:p-4 rounded-lg shadow-sm">
-            <h3 className="font-semibold mb-1 md:mb-2 text-sm md:text-base">
-              Personalized Care
-            </h3>
-            <p className="text-xs md:text-sm text-blue-600/80">
-              Tailored guidance based on your unique needs
-            </p>
-          </div>
-
-          <div className="bg-white/70 backdrop-blur-sm p-3 md:p-4 rounded-lg shadow-sm">
-            <h3 className="font-semibold mb-1 md:mb-2 text-sm md:text-base">
-              Professional Resources
-            </h3>
-            <p className="text-xs md:text-sm text-blue-600/80">
-              Connect with licensed therapists when needed
-            </p>
-          </div>
+          <FeatureHighlight
+            title=" 24/7 Support"
+            subtitle="Always available when you need someone to talk to"
+          />
+          <FeatureHighlight
+            title="Personalized Care"
+            subtitle="Tailored guidance based on your unique needs"
+          />
+          <FeatureHighlight
+            title="Professional Resources"
+            subtitle="Connect with licensed therapists when needed"
+          />
         </motion.div>
       </motion.div>
 
+      {/* footer */}
       <footer className="z-20 absolute bottom-0 right-0 left-0 flex items-center justify-center p-2 text-gray-600 text-sm">
         &copy; {new Date().getFullYear()} CalmBot. All rights reserved.
       </footer>

@@ -4,13 +4,20 @@ import { AlertCircle, CheckCircle, Info, X } from "lucide-react";
 interface MessageProps {
   type?: "success" | "error" | "status";
   message: string;
+  setShowPopUp: (closePopUp: boolean) => void;
 }
 
-export default function Message({ type = "status", message }: MessageProps) {
+export default function Message({
+  type = "status",
+  message,
+  setShowPopUp,
+}: MessageProps) {
   const [visible, setVisible] = useState(false);
   const [progress, setProgress] = useState(100);
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const progressIntervalRef = useRef<
+    ReturnType<typeof setInterval> | undefined
+  >(undefined);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Determine styles based on message type
   const styles = {
@@ -42,6 +49,7 @@ export default function Message({ type = "status", message }: MessageProps) {
 
   const handleClose = () => {
     setVisible(false);
+    setShowPopUp(false);
   };
 
   // Reset and start animation when message changes
@@ -71,16 +79,23 @@ export default function Message({ type = "status", message }: MessageProps) {
       // Set up auto-dismiss timer
       timerRef.current = setTimeout(() => {
         setVisible(false);
+        setShowPopUp(false);
       }, duration);
     }
 
     // Cleanup
     return () => {
-      if (progressIntervalRef.current)
+      if (progressIntervalRef.current !== undefined) {
         clearInterval(progressIntervalRef.current);
-      if (timerRef.current) clearTimeout(timerRef.current);
+        progressIntervalRef.current = undefined;
+      }
+
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+        timerRef.current = undefined;
+      }
     };
-  }, [message]);
+  }, [message, setShowPopUp]);
 
   if (!message) return null;
 
@@ -101,7 +116,9 @@ export default function Message({ type = "status", message }: MessageProps) {
             <div className="flex items-start">
               <div className="flex-shrink-0">{currentStyle.icon}</div>
               <div className="ml-3">
-                <h3 className={`text-sm font-medium ${currentStyle.textColor}`}>
+                <h3
+                  className={`text-sm text-left font-medium ${currentStyle.textColor}`}
+                >
                   {currentStyle.title}
                 </h3>
                 <div
