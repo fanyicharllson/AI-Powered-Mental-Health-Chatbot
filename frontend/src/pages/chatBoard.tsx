@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 const ChatDashboard = () => {
   const [messages, setMessages] = useState([
@@ -7,29 +7,14 @@ const ChatDashboard = () => {
   ]);
   const chatRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(
-    window.innerWidth >= 640 // Sidebar open by default on desktop, closed on mobile
-  );
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Handle window resize to adjust sidebar visibility
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 640) {
-        setIsSidebarOpen(true); // Always open on desktop
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Check if user is at the bottom of the chat
   const checkScroll = () => {
     if (!chatRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
     setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 10);
   };
 
-  // Auto-scroll when new messages are added
   useEffect(() => {
     if (isAtBottom && chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
@@ -58,102 +43,114 @@ const ChatDashboard = () => {
   };
 
   return (
-    <div className="flex w-full h-screen">
-      {/* Sidebar (always present, no animation on load) */}
-      <div
-        className={`h-screen bg-blue-100 w-[300px] overflow-y-auto fixed left-0 top-0 sm:block ${
-          isSidebarOpen ? "block" : "hidden"
-        }`}
-      >
-        <div className="p-4 flex justify-between items-center border-b bg-gray-200">
-          <span className="text-lg font-bold">Sidebar</span>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="bg-red-500 text-white px-2 py-1 rounded sm:hidden"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-
-      {/* Chat Container (Adjusts based on sidebar visibility) */}
-      <div
-        className={`h-full flex flex-col bg-gray-100 p-4 overflow-hidden ml-auto ${
-          isSidebarOpen ? "sm:ml-[300px]" : "ml-0"
-        } w-full`}
-      >
-        {/* Open Sidebar Button (only on mobile) */}
-        {!isSidebarOpen && (
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded sm:hidden"
-          >
-            Open Sidebar
-          </button>
-        )}
-
-        {/* Chat Messages */}
-        <div
-          ref={chatRef}
-          className="flex-1 overflow-y-auto p-2 space-y-2"
-          onScroll={checkScroll}
+    <>
+      <div className="sm:flex max-sm:flex h-screen">
+        {/* Collapsible Sidebar for Desktop */}
+        <motion.div
+          // Animate the width between full and collapsed (256px vs 64px)
+          initial={false}
+          animate={{ width: isSidebarOpen ? 256 : 64 }}
+          transition={{ duration: 0.3 }}
+          className="max-sm:hidden flex flex-col fixed inset-y-0 left-0 bg-blue-100 shadow-lg z-20 overflow-hidden"
         >
-          {messages.map((msg, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`flex items-end ${
-                msg.id === 0 ? "justify-end" : "justify-start"
-              }`}
+          <div className="p-4 flex items-center border-b bg-gray-200">
+            {isSidebarOpen && (
+              <span className="text-lg font-bold flex-1">Sidebar</span>
+            )}
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="bg-blue-500 text-white px-2 py-1 rounded"
             >
-              {/* Avatar */}
-              {msg.id === 1 && (
-                <img
-                  src="/bot-avatar.png"
-                  alt="AI"
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-              )}
+              {isSidebarOpen ? "<" : ">"}
+            </button>
+          </div>
+          {/* Sidebar Content */}
+          <div className="flex-1 p-4">
+            <ul>
+              <li className="flex items-center mb-4">
+                <img src="/home-icon.png" alt="Home" className="w-6 h-6" />
+                {isSidebarOpen && <span className="ml-2">Home</span>}
+              </li>
+              <li className="flex items-center mb-4">
+                <img src="/chat-icon.png" alt="Chat" className="w-6 h-6" />
+                {isSidebarOpen && <span className="ml-2">Chat</span>}
+              </li>
+              {/* Add more sidebar items as needed */}
+            </ul>
+          </div>
+        </motion.div>
 
-              {/* Message Bubble */}
-              <div
-                className={`p-3 rounded-lg text-white max-w-[75%] break-words whitespace-pre-wrap ${
-                  msg.id === 0 ? "bg-blue-500" : "bg-gray-700"
-                }`}
-              >
-                {msg.message}
-              </div>
+        {/* Main Chat Area */}
+        <div
+          className={`flex-1 flex flex-col bg-gray-100 w-[90%] overflow-hidden  transition-all duration-300 ${
+            isSidebarOpen ? "sm:ml-64" : "sm:ml-16"
+          }`}
+        >
+          {/* Nav element visible on only mobile device */}
+          <div className="sm:hidden bg-red-500 px-3 py-2">
+            fkjhfgjfhgjkfhdkhfgk
+          </div>
 
-              {/* Avatar (User) */}
-              {msg.id === 0 && (
-                <img
-                  src="/user-avatar.png"
-                  alt="User"
-                  className="w-8 h-8 rounded-full ml-2"
-                />
-              )}
-            </motion.div>
-          ))}
-        </div>
+          {/* Chat Container: Full width for the scrollbar */}
+          <div
+            className="flex-1 overflow-y-auto"
+            ref={chatRef}
+            onScroll={checkScroll}
+          >
+            <div className="space-y-2 p-2 max-w-[800px] mx-auto w-[90%]">
+              {messages.map((msg, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`flex items-end ${
+                    msg.id === 0 ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {msg.id === 1 && (
+                    <img
+                      src="/bot-avatar.png"
+                      alt="AI"
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                  )}
+                  <div
+                    className={`p-3 rounded-lg text-sm text-white max-w-[60%] break-words whitespace-pre-wrap ${
+                      msg.id === 0 ? "bg-blue-500" : "bg-gray-700"
+                    }`}
+                  >
+                    {msg.message}
+                  </div>
+                  {msg.id === 0 && (
+                    <img
+                      src="/user-avatar.png"
+                      alt="User"
+                      className="w-8 h-8 rounded-full ml-2"
+                    />
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </div>
 
-        {/* Input Field */}
-        <div className="mt-4 flex justify-center">
-          <textarea
-            className="w-full max-w-[800px] p-3 border rounded-lg resize-none min-h-[40px] max-h-[120px] overflow-y-auto focus:ring-1 focus:border-blue-500 focus:ring-blue-500 outline-none"
-            placeholder="Message CalmBot"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage((e.target as HTMLTextAreaElement).value);
-                (e.target as HTMLTextAreaElement).value = "";
-              }
-            }}
-          />
+          {/* Input Field */}
+          <div className="mt-4 px-4 pb-4 mx-auto w-full max-w-[800px]">
+            <textarea
+              className="w-full p-3 border rounded-lg resize-none min-h-[40px] max-h-[120px] overflow-y-auto focus:ring-1 focus:border-blue-500 focus:ring-blue-500 outline-none text-sm"
+              placeholder="Message CalmBot"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage((e.target as HTMLTextAreaElement).value);
+                  (e.target as HTMLTextAreaElement).value = "";
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
