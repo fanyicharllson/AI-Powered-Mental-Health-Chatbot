@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Tooltip from "@mui/material/Tooltip";
 
 interface LeftSideBarProps {
   onClick?: () => void;
@@ -17,16 +18,53 @@ function LeftSideBar({ isSidebarOpen, setIsSidebarOpen }: LeftSideBarProps) {
         transition={{ duration: 0.3 }}
         className="max-sm:hidden flex flex-col fixed inset-y-0 left-0 bg-blue-100 shadow-lg z-20 overflow-hidden"
       >
-        <div className="p-4 flex items-center border-b bg-gray-200">
-          {isSidebarOpen && (
-            <span className="text-lg font-bold flex-1">CalmBot</span>
-          )}
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="bg-blue-500 text-white px-2 py-1 rounded"
-          >
-            {isSidebarOpen ? "<" : ">"}
+        {/* Top elements */}
+        <div className="p-2 flex items-center justify-between border-b">
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="">
+            {isSidebarOpen ? (
+              <div className="group relative cursor-pointer">
+                <Tooltip title="Close Sidebar" arrow placement="right">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-md">
+                    <div className="absolute inset-0 bg-blue-200 opacity-0 group-hover:opacity-100 rounded-md transition duration-300"></div>
+                    <img
+                      src="/sidebar2.svg"
+                      alt="sidebar"
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                </Tooltip>
+              </div>
+            ) : (
+              <div className="group relative cursor-pointer">
+                <Tooltip title="Open Sidebar" arrow placement="bottom-start">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-md">
+                    <div className="absolute inset-0 bg-blue-200 opacity-0 group-hover:opacity-100 rounded-md transition duration-300"></div>
+                    <img
+                      src="/sidebar2.svg"
+                      alt="sidebar"
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                </Tooltip>
+              </div>
+            )}
           </button>
+          <div>
+            {isSidebarOpen && (
+              <div className="group relative cursor-pointer">
+                <Tooltip title="New Chat" arrow>
+                  <div className="w-10 h-10 flex items-center justify-center rounded-md">
+                    <div className="absolute inset-0 bg-blue-200 opacity-0 group-hover:opacity-100 rounded-md transition duration-300"></div>
+                    <img
+                      src="/pencil2.svg"
+                      alt="pencil"
+                      className="w-6 h-6 relative z-10"
+                    />
+                  </div>
+                </Tooltip>
+              </div>
+            )}
+          </div>
         </div>
         {/* Sidebar Content */}
         <div className="flex-1 p-4">
