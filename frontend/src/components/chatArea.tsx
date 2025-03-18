@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from "react";
 function ChatArea() {
   const chatRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
-  const [messages, setMessages] = useState([
-    { id: 1, message: "Hello! How can I assist you today? 😊" },
-  ]);
+  const [messages, setMessages] = useState<{ id: number; message: string }[]>(
+    []
+  );
   const [message, setMessage] = useState(""); // track input state
 
   const checkScroll = () => {
@@ -52,6 +52,22 @@ function ChatArea() {
         ref={chatRef}
         onScroll={checkScroll}
       >
+        {/* Welcome Message - Only Show If No Messages */}
+        {messages.length === 0 && (
+          <div className="flex justify-center items-center text-center px-6 w-full h-full">
+            <div>
+              <h1 className="text-3xl md:text-5xl font-bold text-blue-600">
+                Welcome to CalmBot 🤖
+              </h1>
+              <p className="text-gray-600 mt-2 text-sm md:text-lg">
+                Your AI companion for mental wellness. Let's chat—how can I
+                support you today?
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Chat Messages */}
         <div className="space-y-2 p-2 max-w-[800px] mx-auto w-[90%]">
           {messages.map((msg, index) => (
             <motion.div
@@ -59,17 +75,19 @@ function ChatArea() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className={`flex items-end ${
+              className={`flex items-start ${
                 msg.id === 0 ? "justify-end" : "justify-start"
               }`}
             >
               {msg.id === 1 && (
                 <img
-                  src="/bot-avatar.png"
+                  src="/logo2.svg"
                   alt="AI"
-                  className="w-8 h-8 rounded-full mr-2"
+                  className="w-6 h-6 mr-2 self-start"
                 />
               )}
+
+              {/* Message Avatar */}
               <div
                 className={`p-3 rounded-lg text-sm text-white max-w-[60%] break-words whitespace-pre-wrap ${
                   msg.id === 0 ? "bg-blue-500" : "bg-gray-700"
@@ -77,11 +95,13 @@ function ChatArea() {
               >
                 {msg.message}
               </div>
+
+              {/* User Avatar */}
               {msg.id === 0 && (
                 <img
-                  src="/user-avatar.png"
+                  src="/userAvatar.svg"
                   alt="User"
-                  className="w-8 h-8 rounded-full ml-2"
+                  className="w-6 h-6 ml-2 self-start"
                 />
               )}
             </motion.div>

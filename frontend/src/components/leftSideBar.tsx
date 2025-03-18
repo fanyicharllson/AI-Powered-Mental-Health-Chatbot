@@ -70,11 +70,12 @@ function LeftSideBar({ isSidebarOpen, setIsSidebarOpen }: LeftSideBarProps) {
         <div className="flex-1 p-4">
           <ul>
             <li className="flex items-center mb-4">
-              <img src="/home-icon.png" alt="Home" className="w-6 h-6" />
+              {!isSidebarOpen && (
+                <img src="/pencil2.svg" alt="New Chat" className="w-6 h-6" />
+              )}
               {isSidebarOpen && <span className="ml-2">Home</span>}
             </li>
             <li className="flex items-center mb-4">
-              <img src="/chat-icon.png" alt="Chat" className="w-6 h-6" />
               {isSidebarOpen && <span className="ml-2">Chat</span>}
             </li>
             {/* Add more sidebar items as needed */}
