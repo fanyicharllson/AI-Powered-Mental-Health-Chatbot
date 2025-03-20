@@ -56,8 +56,8 @@ function ChatArea() {
         {messages.length === 0 && (
           <div className="flex justify-center items-center text-center px-6 w-full h-full">
             <div>
-              <h1 className="text-3xl md:text-5xl font-bold text-blue-600">
-                Welcome to CalmBot 🤖
+              <h1 className="text-3xl md:text-5xl font-bold text-blue-600 capitalize">
+                Hi, I'm CalmBot 🤖
               </h1>
               <p className="text-gray-600 mt-2 text-sm md:text-lg">
                 Your AI companion for mental wellness. Let's chat—how can I
