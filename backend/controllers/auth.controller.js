@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { sendVerificationEmail } from "../mailtrap/emails.js";
 
 export const signUp = async (req, res) => {
   const { username, email, password } = req.body;
@@ -17,7 +18,7 @@ export const signUp = async (req, res) => {
         .status(400)
         .json({
           success: false,
-          message: "User with this email already exists",
+          message: "User with the email already exists",
         });
     }
     //check if user name already exists
@@ -27,7 +28,7 @@ export const signUp = async (req, res) => {
         .status(400)
         .json({
           success: false,
-          message: "User with this username already exists",
+          message: "Username already exists",
         });
     }
     //hash password
@@ -51,6 +52,9 @@ export const signUp = async (req, res) => {
 
     //jwt
     generateTokenAndSetCookie(res, newUser._id);
+
+    //send verification email
+    await sendVerificationEmail(newUser.email, verificationToken);
 
     res.status(201).json({
       success: true,
