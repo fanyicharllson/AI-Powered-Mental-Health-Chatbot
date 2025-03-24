@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Please add a password"],
-      select: false, // Prevent password from being sent in responses
+      // select: false, // Prevent password from being sent in responses
     },
     lastlogin: {
       type: Date,
