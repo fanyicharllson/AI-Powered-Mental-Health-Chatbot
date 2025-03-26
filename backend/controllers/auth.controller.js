@@ -5,7 +5,7 @@ import {
   sendVerificationEmail,
   sendWelcomeEmail,
   sendPasswordResetEmail,
-  sentResetSuccessEmail
+  sentResetSuccessEmail,
 } from "../mailtrap/emails.js";
 import crypto from "crypto";
 
@@ -229,6 +229,30 @@ export const resetPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("Error resetting password", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error! Please try again later.",
+    });
+  }
+};
+
+export const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    console.error("Error checking auth", error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Error! Please try again later.",
