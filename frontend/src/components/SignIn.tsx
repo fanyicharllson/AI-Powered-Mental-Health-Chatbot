@@ -4,15 +4,20 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
-import Loadingspin from "../Loaders/loader1";
 import AppLogo from "./AppLogo";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuthStore } from "../../store/authStore";
+import AuthButton from "./authButton";
+import ErrorMessage from "./error-message";
+import toast from "react-hot-toast";
 
 type SignUpSchemaData = z.infer<typeof SignInSchema>;
 
 function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
+  const { signin, error } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -27,10 +32,15 @@ function SignIn() {
     },
   });
 
-  const onSubmit = (data: SignUpSchemaData) => {
-    // Handle form submission
-    console.log(data);
-    reset();
+  const onSubmit = async (data: SignUpSchemaData) => {
+    try {
+      await signin(data.email, data.password);
+      reset();
+      navigate("/chatboard");
+      toast.success("Successfully signed in!");
+    } catch (error) {
+      console.error("Error during signup:", error);
+    }
   };
 
   return (
@@ -109,24 +119,17 @@ function SignIn() {
                   {errors.password.message}
                 </p>
               )}
+              {/* Show error message to user from the backend */}
+              {error && <ErrorMessage error={error} />}
             </div>
           </div>
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full py-2.5 px-10 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold disabled:cursor-not-allowed transition-all duration-300"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <div className="flex items-center justify-center gap-2">
-                <Loadingspin />
-                <span>Signing in...</span>
-              </div>
-            ) : (
-              "Sign In"
-            )}
-          </button>
+          <AuthButton
+            isSubmitting={isSubmitting}
+            stateText="Signing in"
+            text="Sign in"
+          />
         </form>
         <div className="space-y-2 pt-5">
           <div className="relative">

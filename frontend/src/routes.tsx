@@ -5,6 +5,10 @@ import SignUpPage from "./pages/sign-up";
 import SignInPage from "./pages/sign-in";
 import ChatDashboard from "./pages/chatBoard";
 import EmailVeficationCode from "./pages/verifyEmail";
+import {
+  ProtectChatboardRoute,
+  RedirectAuthenticatedUser,
+} from "../auth/redirect.auth.user";
 
 export const router = createBrowserRouter([
   {
@@ -14,18 +18,35 @@ export const router = createBrowserRouter([
   },
   {
     path: "/sign-up",
-    element: <SignUpPage />,
+    element: (
+      <RedirectAuthenticatedUser>
+        <SignUpPage />
+      </RedirectAuthenticatedUser>
+    ),
   },
   {
     path: "/verify-email",
-    element: <EmailVeficationCode/>
+    element: (
+      <RedirectAuthenticatedUser>
+        <EmailVeficationCode />
+      </RedirectAuthenticatedUser>
+    ),
   },
   {
     path: "/sign-in",
-    element: <SignInPage />,
+    element: (
+      <RedirectAuthenticatedUser>
+        <SignInPage />
+      </RedirectAuthenticatedUser>
+    ),
   },
   {
     path: "/chatboard",
-    element: <ChatDashboard/>
-  }
+    element: (
+      <ProtectChatboardRoute>
+        <ChatDashboard />
+      </ProtectChatboardRoute>
+    ),
+  },
+ 
 ]);

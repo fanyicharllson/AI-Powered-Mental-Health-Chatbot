@@ -45,7 +45,7 @@ export default function Message({
   };
 
   const currentStyle = styles[type];
-  const duration = 15000; //15 seconds
+  const duration = 7000; //7 seconds
 
   const handleClose = () => {
     setVisible(false);

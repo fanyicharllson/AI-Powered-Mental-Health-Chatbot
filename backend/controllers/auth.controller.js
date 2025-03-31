@@ -120,14 +120,14 @@ export const SignIn = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Invalid Credentials",
+        message: "Invalid Credentials!",
       });
     }
     const isPasswordValid = await bcryptjs.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({
         success: false,
-        message: "Invalid Credentials",
+        message: "Invalid Credentials!",
       });
     }
 
@@ -249,10 +249,53 @@ export const checkAuth = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      user
+      user,
     });
   } catch (error) {
     console.error("Error checking auth", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error! Please try again later.",
+    });
+  }
+};
+
+export const resentVerificationCode = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    //check if user exists
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User with the email does not exist",
+      });
+    }
+    //check if user is already verified
+    if (user.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "User is already verified!",
+      });
+    }
+    //generate new verification code
+    const verificationToken = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+    user.verificationToken = verificationToken;
+    user.verificationTokenExpireAt = Date.now() + 24 * 60 * 60 * 1000; //24hrs
+
+    await user.save();
+
+    //send verification email
+    await sendVerificationEmail(user.email, verificationToken);
+
+    res.status(200).json({
+      success: true,
+      message: "Verification code resent successfully",
+    });
+  } catch (error) {
+    console.error("Error resending verification code", error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Error! Please try again later.",

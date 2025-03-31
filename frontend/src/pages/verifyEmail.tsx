@@ -1,20 +1,69 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 // import AppLogo from "../components/AppLogo";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Message from "../components/PopUpmessage";
+import { useAuthStore } from "../../store/authStore";
+import toast from "react-hot-toast";
+import ErrorMessage from "../components/error-message";
 
 export default function EmailVeficationCode() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const location = useLocation();
   const [showPopup, setShowPopup] = useState(false);
+  const [timer, setTimer] = useState(59); // Countdown starts at 50 seconds
+  const [canResend, setCanResend] = useState(false);
+  const { error, isLoading, verifyEmail, resentVericationCode, email } =
+    useAuthStore();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     if (location.state?.showPopup) {
       setShowPopup(true);
     }
   }, [location.state]);
+
+  useEffect(() => {
+    let countdown: NodeJS.Timeout;
+
+    if (timer > 0) {
+      countdown = setTimeout(() => setTimer((prev) => prev - 1), 1000);
+    } else {
+      setCanResend(true); // Allow resending the code when the timer reaches 0
+    }
+
+    return () => clearTimeout(countdown); // Cleanup the timer
+  }, [timer]);
+
+  // Auto submit when all fields are filled
+  useEffect(() => {
+    if (code.every((digit) => digit !== "")) {
+      handleSubmit({
+        preventDefault: () => {},
+      } as React.FormEvent<HTMLFormElement>);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code]);
+
+  const handleResendCode = async () => {
+    if (!canResend) return;
+
+    try {
+      if (email) {
+        await resentVericationCode(email);
+      } else {
+        console.error("Email is null or undefined.");
+      }
+      toast.success("Verification code resent successfully!");
+    } catch (error) {
+      console.log(error);
+    }
+    // Reset the timer and disable resending
+    setTimer(50);
+    setCanResend(false);
+  };
 
   /**
    *
@@ -71,24 +120,20 @@ export default function EmailVeficationCode() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const verificationCode = code.join("");
-    console.log(`Verifying code: ${verificationCode}`);
-  };
-
-  // Auto submit when all fields are filled
-  useEffect(() => {
-    if (code.every((digit) => digit !== "")) {
-      handleSubmit({
-        preventDefault: () => {},
-      } as React.FormEvent<HTMLFormElement>);
+    try {
+      await verifyEmail(verificationCode);
+      navigate("/chatboard");
+      toast.success("Email verified successfully!");
+    } catch (error) {
+      console.log(error);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code]);
+  };
 
   return (
     <>
       {showPopup && (
         <Message
-          message="Check your email, a verification code has sent for you to verify your account!"
+          message=" Enter the 6-digit code sent to your email address!"
           setShowPopUp={setShowPopup}
         />
       )}
@@ -126,17 +171,34 @@ export default function EmailVeficationCode() {
                 />
               ))}
             </div>
-            {/* {error && <p className="text-red-500 font-semibold mt-2">{error}</p>} */}
+            {error && <ErrorMessage error={error} />}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
-              // disabled={isLoading || code.some((digit) => !digit)}
+              disabled={isLoading || code.some((digit) => !digit)}
               className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50"
             >
-              Verify Email
-              {/* {isLoading ? "Verifying..." : "Verify Email"} */}
+              {isLoading ? "Verifying..." : "Verify Email"}
             </motion.button>
+
+            <p className="text-center text-gray-500 text-sm">
+              {canResend ? (
+                <>
+                  Didn&apos;t receive the code?{" "}
+                  <span
+                    onClick={handleResendCode}
+                    className="text-blue-500 cursor-pointer hover:underline"
+                  >
+                    Resend Code
+                  </span>
+                </>
+              ) : (
+                <span className="text-gray-400">
+                  Resend available in {timer} seconds
+                </span>
+              )}
+            </p>
           </form>
         </motion.div>
       </div>
