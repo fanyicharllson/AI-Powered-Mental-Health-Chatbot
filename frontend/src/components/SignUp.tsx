@@ -4,14 +4,20 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, EyeOff, Eye, User2 } from "lucide-react";
 import { useState } from "react";
-import Loadingspin from "../Loaders/loader1";
 import AppLogo from "./AppLogo";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useAuthStore } from "../../store/authStore";
+import { useNavigate } from "react-router-dom";
+import AuthButton from "./authButton";
+import ErrorMessage from "./error-message";
 
 type SignUpSchemaData = z.infer<typeof SignUpSchema>;
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
+  const { signup, error } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -27,10 +33,14 @@ function SignUp() {
     },
   });
 
-  const onSubmit = (data: SignUpSchemaData) => {
-    // Handle form submission
-    console.log(data);
-    reset();
+  const onSubmit = async (data: SignUpSchemaData) => {
+    try {
+      await signup(data.username, data.email, data.password);
+      reset(); // Reset the form after successful signup
+      navigate("/verify-email", { state: { showPopup: true } }); // Redirect to verify email page
+    } catch (error) {
+      console.error("Error during signup:", error);
+    }
   };
 
   return (
@@ -41,7 +51,12 @@ function SignUp() {
       </div>
 
       {/* Form Container */}
-      <div className="bg-white p-6 md:p-8 lg:p-10 w-[98%] max-sm:w-[96%] max-h-[80vh] overflow-y-auto max-w-sm md:max-w-md rounded-lg lg:max-w-lg shadow-lg">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white p-6 md:p-8 lg:p-10 w-[98%] max-sm:w-[96%] max-h-[80vh] overflow-y-auto max-w-sm md:max-w-md rounded-lg lg:max-w-lg shadow-lg"
+      >
         <div className="text-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-blue-800">
             Welcome to CalmBot!
@@ -124,24 +139,17 @@ function SignUp() {
                   {errors.password.message}
                 </p>
               )}
+              {/* Show error message to user from the backend */}
+              {error && <ErrorMessage error={error} />}
             </div>
           </div>
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full py-2.5 px-10 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold disabled:cursor-not-allowed transition-all duration-300"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <div className="flex items-center justify-center gap-2">
-                <Loadingspin />
-                <span>Signing Up...</span>
-              </div>
-            ) : (
-              "Sign Up"
-            )}
-          </button>
+          <AuthButton
+            isSubmitting={isSubmitting}
+            stateText="Signing Up"
+            text="Sign up"
+          />
         </form>
         <div className="space-y-2 pt-5">
           <div className="relative">
@@ -175,7 +183,7 @@ function SignUp() {
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Footer */}
       <footer className="absolute bottom-0 left-0 right-0 text-center text-sm text-gray-600 p-2">

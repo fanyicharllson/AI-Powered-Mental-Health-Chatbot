@@ -7,6 +7,7 @@ import { useState } from "react";
 import Loadingspin from "../Loaders/loader1";
 import AppLogo from "./AppLogo";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 type SignUpSchemaData = z.infer<typeof SignInSchema>;
 
@@ -40,7 +41,12 @@ function SignIn() {
       </div>
 
       {/* Form Container */}
-      <div className="bg-white p-6 md:p-8 lg:p-10 w-[98%] max-sm:w-[96%] max-h-[80vh] overflow-y-auto max-w-sm md:max-w-md rounded-lg lg:max-w-lg shadow-lg">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white p-6 md:p-8 lg:p-10 w-[98%] max-sm:w-[96%] max-h-[80vh] overflow-y-auto max-w-sm md:max-w-md rounded-lg lg:max-w-lg shadow-lg"
+      >
         <div className="text-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-blue-800">
             Welcome back buddy!
@@ -154,7 +160,7 @@ function SignIn() {
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Footer */}
       <footer className="absolute bottom-0 left-0 right-0 text-center text-sm text-gray-600 p-2">

@@ -45,7 +45,7 @@ export default function Message({
   };
 
   const currentStyle = styles[type];
-  const duration = 5000; // 5 seconds
+  const duration = 15000; //15 seconds
 
   const handleClose = () => {
     setVisible(false);
@@ -101,7 +101,7 @@ export default function Message({
 
   return (
     <div
-      className={`fixed top-0 left-1/2 transform -translate-x-1/2 mt-8 z-50 transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 left-1/2 transform -translate-x-1/2 mt-4 z-50 transition-all duration-300 ease-in-out ${
         visible ? "translate-y-0 opacity-100" : "-translate-y-16 opacity-0"
       } max-w-xs sm:max-w-md md:max-w-lg w-full mx-auto`}
       role="alert"
