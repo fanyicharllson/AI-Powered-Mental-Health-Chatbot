@@ -1,0 +1,37 @@
+# Ignore the virtual environment folder
+venv/
+# If you use a different name for your virtual environment, include that as well
+# myenv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Distribution / packaging
+.Python
+env/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Local configuration files
+*.env
+*.local
+
+# Logs
+*.log
+
+# Other files to ignore
+*.DS_Store
+Thumbs.db
